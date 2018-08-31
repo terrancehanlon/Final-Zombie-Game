@@ -1,0 +1,76 @@
+{"frames": {
+
+"skeleton-attack_0.png":
+{
+	"frame": {"x":196,"y":97,"w":93,"h":83},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":25,"y":32,"w":93,"h":83},
+	"sourceSize": {"w":149,"h":138}
+},
+"skeleton-attack_1.png":
+{
+	"frame": {"x":171,"y":1,"w":91,"h":94},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":24,"y":25,"w":91,"h":94},
+	"sourceSize": {"w":149,"h":138}
+},
+"skeleton-attack_2.png":
+{
+	"frame": {"x":1,"y":1,"w":85,"h":111},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":23,"y":15,"w":85,"h":111},
+	"sourceSize": {"w":149,"h":138}
+},
+"skeleton-attack_3.png":
+{
+	"frame": {"x":291,"y":75,"w":77,"h":111},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":21,"y":13,"w":77,"h":111},
+	"sourceSize": {"w":149,"h":138}
+},
+"skeleton-attack_4.png":
+{
+	"frame": {"x":88,"y":1,"w":81,"h":111},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":26,"y":13,"w":81,"h":111},
+	"sourceSize": {"w":149,"h":138}
+},
+"skeleton-attack_5.png":
+{
+	"frame": {"x":264,"y":1,"w":97,"h":72},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":36,"y":32,"w":97,"h":72},
+	"sourceSize": {"w":149,"h":138}
+},
+"skeleton-attack_6.png":
+{
+	"frame": {"x":97,"y":114,"w":97,"h":76},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":32,"y":32,"w":97,"h":76},
+	"sourceSize": {"w":149,"h":138}
+},
+"skeleton-attack_7.png":
+{
+	"frame": {"x":1,"y":114,"w":94,"h":82},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":27,"y":32,"w":94,"h":82},
+	"sourceSize": {"w":149,"h":138}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "SmallerZombies.png",
+	"format": "RGBA8888",
+	"size": {"w":369,"h":197},
+	"scale": "0.46875",
+	"smartupdate": "$TexturePacker:SmartUpdate:63f20e64a896004fe5f5af3dc8f40766:0a2f08db391b53d7df1d19a853d6c4f3:72a8ea07e5760227a5262e9ac4ed15b8$"
+}
+}

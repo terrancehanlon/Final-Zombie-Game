@@ -1,0 +1,23 @@
+{
+	"name": "ZombieGame",
+	"version": "0.0.0",
+	"description": "Assignment 8",
+	"author": "Terrance Hanlon",
+	"license": "BSD-2-Clause",
+	"dependencies": {
+		"babel-preset-env": "^1.6.1",
+		"babel-register": "^6.26.0",
+		"chai": "^4.1.2",
+		"mocha": "^5.0.4",
+		"sinon": "^4.4.6"
+	},
+	"scripts":{
+		"test": "mocha --require babel-register"
+	},
+	"babel":{
+	  	"presets": [
+		  "env"
+	]
+	}
+
+}

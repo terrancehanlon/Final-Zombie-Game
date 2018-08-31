@@ -1,0 +1,42 @@
+<!-- Code modified from https://www.sitepoint.com/unit-test-javascript-mocha-chai/ -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mocha Tests</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/5.0.1/mocha.min.css">
+    <style>
+        #canvasContainer {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="mocha"></div>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mocha/5.0.1/mocha.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.1.2/chai.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sinon.js/5.0.0/sinon.min.js"></script>
+<script type="module">mocha.setup('bdd')</script>
+
+<!-- load code you want to test here -->
+
+<!-- load your test files here -->
+<script src="scripts/libs/mock_phaser.js"></script>
+<script type="module" src="test_web/test_Player.js"> </script>
+<script type="module" src="test_web/test_PowerUps.js"> </script>
+<script type="module" src="test_web/test_BossModel.js"> </script>
+<script type="module" src="test_web/test_TowerModel.js"> </script>
+<script type="module" src="test_web/test_EnemyModel.js"> </script>
+<script type="module" src="test_web/test_HealthBar.js"> </script>
+<script type="module" src="test_web/test_Weapon.js"> </script>
+<script type="module" src="test_web/test_TowerCrateModel.js"> </script>
+
+
+<script type="module">
+    mocha.run();
+</script>
+
+<div id="canvasContainer"></div>
+</body>
+</html>
