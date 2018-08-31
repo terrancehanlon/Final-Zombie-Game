@@ -5,6 +5,8 @@
 
 http://students.cs.ndsu.nodak.edu/~thanlon/FinalAssign/2/final-zombie-game/
 
+<strong> For best experience, play zoomed out </strong>
+
 <h2>Protect the tower at all costs! </h2>
 <ul>
   <li>Press spacebar to shoot</li>
