@@ -11,13 +11,12 @@
 		"mocha": "^5.0.4",
 		"sinon": "^4.4.6"
 	},
-	"scripts":{
+	"scripts": {
 		"test": "mocha --require babel-register"
 	},
-	"babel":{
-	  	"presets": [
-		  "env"
-	]
+	"babel": {
+		"presets": [
+			"env"
+		]
 	}
-
 }
