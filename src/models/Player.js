@@ -40,10 +40,6 @@ export default class Player extends Phaser.Sprite{
     console.log("create player");
   }
 
-  isDead(){
-    return this.health <= 0;
-  }
-
   shoot(isSuper){ //fires a bullet in the direction the player is facing
     this.x_bullet = this.x;
     this.y_bullet = this.y;
