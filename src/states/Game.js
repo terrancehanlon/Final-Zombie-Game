@@ -17,56 +17,44 @@ export default class Game extends Phaser.State {
     console.log("game mode on");
   }
 
+
+
   create() {
-    this.bg = this.add.tileSprite(0, 0, window.innerWidth + 100, window.innerHeight - 25, 'bg');
-    this.tower = new Tower(this.game, window.innerWidth / 2, window.innerHeight / 2 - 100, 'tower');
-    this.tower2 = new Tower(this.game, window.innerWidth / 2, window.innerHeight/4 - 100, 'tower');
-    this.tower3 = new Tower(this.game, window.innerWidth / 2, window.innerHeight - (window.innerHeight / 4) - 100, 'tower');
+    
+    //adds background image
+    this.add.tileSprite(0, 0, window.innerWidth + 100, window.innerHeight - 25, 'bg');
 
-    let backgroundMusic = this.game.add.audio('music');
-    backgroundMusic.play();
-
-    this.player = new Player(this.game, 600, 100, 'player');
-    this.game.add.existing(this.player);
-    this.game.add.existing(this.tower);
-    this.game.add.existing(this.tower2);
-    this.game.add.existing(this.tower3);
+    this.turnOnBackgroundMusic();
+    this.createTowers();
+    this.createPlayer();
 
 
+    this.styles = {
+      smallText: { font: "30px Arial", fill: "#FFFFFF", align: "center" },
+      medText: { font: "90px Arial", fill: "#1e47cc", align: "center" },
+      LargeText: { font: "150px Arial", fill: "#FFFFFF", align: "center" },
+      pausedMenuText: { fill: '#FFF' }
+    }
 
-    /*Styles -- Can be outsourced to constants ? */
-    this.style = { font: "30px Arial", fill: "#FFFFFF", align: "center" };
-    this.style2 = { font: "90px Arial", fill: "#1e47cc", align: "center" };
-    this.style3 = { font: "150px Arial", fill: "#FFFFFF", align: "center" };
 
 
     /*  Groups */
     this.followingEnemy;
-    this.grabbedCrate; //Crate object that player will bring to tower to heal
+    this.grabbedCrate;
     this.enemies = this.add.group();
     this.enemies.enableBody = true;
     this.healthPots = this.add.group();
     this.towerCrates = this.add.group();
     this.enemiesChasingTowers = this.add.group();
-    this.towers = this.add.group();
+    this.towers = this.createTowerGroup();
 
-    this.towers.add(this.tower);
-    this.towers.add(this.tower2);
-    this.towers.add(this.tower3);
 
     /* Text */
     this.score = 0;
-    this.text = this.game.add.text(10, 10, this.score, this.style2);
-    let blue = this.game.add.sprite(window.innerWidth/2.35 /*+ (window.innerWidth/10)*/, 10, 'blue');
-    let red = this.game.add.sprite(window.innerWidth/2.55 /* + (window.innerWidth/9)*/, 10, 'red');
-    let green = this.game.add.sprite(window.innerWidth/2.75 /*+ (window.innerWidth/8)*/, 10, 'green');
-    let purple = this.game.add.sprite(window.innerWidth/3 /*+ (window.innerWidth/7)*/, 10, 'purple');
-    let yellow = this.game.add.sprite(window.innerWidth/3.3/*+ (window.innerWidth/6)*/, 10, 'yellow');
-    blue.scale.setTo(2.5);
-    red.scale.setTo(2.5);
-    green.scale.setTo(2.5);
-    purple.scale.setTo(2.5);
-    yellow.scale.setTo(2.5);
+    this.text = this.game.add.text(10, 10, this.score, this.styles['medText']);
+    
+    this.createPowerUpTextMenu();
+
     this.bossText;
     var text;
 
@@ -77,8 +65,7 @@ export default class Game extends Phaser.State {
 
     pauseButton.events.onInputUp.add(function() {
       this.game.paused = true;
-      var style = { fill: '#FFF' };
-      text = this.game.add.text(window.innerWidth/2, window.innerHeight/2, "GAME PAUSED", style);
+      text = this.game.add.text(window.innerWidth/2, window.innerHeight/2, "GAME PAUSED", this.styles['pausedMenuText']);
       text.anchor.set(0.5, 0.5);
       text.scale.setTo(3);
     }, this);
@@ -113,84 +100,61 @@ export default class Game extends Phaser.State {
     this.enemiesChasingTowerOn = false;
     this.bossWave = 10;
 
-    //console.log(this.tower.tint);
-
+    
   }
 
   update() {
-    let ran = Math.random() * 1000;
-    let healthRan = Math.random() * 1000;
-    let crateRan = Math.random() * 1000;
+    let randomDiceRoll = Math.random() * 1000;
+    let healthRandomDiceRoll = Math.random() * 1000;
+    let crateRandomDiceRoll = Math.random() * 1000;
 
 
-    window.onkeydown = function (event) { if (event.keyCode == 80) { game.paused = !game.paused; } }
-    if (this.player.health <= 0) {
-      this.game.state.start('gameOver');
-    }
-
+    window.onkeydown = function (event) { if (event.keyCode == 80) { 
+      game.paused = !game.paused; 
+    } 
+  }
 
     /*When health of tower or player is zero, game over*/
-    if(this.player.health <= 0 || this.tower.health <= 0)
-      this.game.state.start('gameOver');
-
+    if(this.player.isDead() || this.tower.isDead() <= 0){
+      this.gameOver();
+    }
+      
 
     /*  Spawning Enemies */
-    if(ran > this.enemySpawnRate && this.enemySpawn){
-      for(var i = 0; i < 1; i++){
-        this.enemy = new Enemy(this.game, -25, Math.random() * window.innerHeight, 'zombies', 2, true);
-        this.enemies.add(this.enemy);
-      }
+    if(randomDiceRoll > this.enemySpawnRate && this.enemySpawn){
+      this.createEnemies();
     }
 
     /*  Spawning Tower Creates */
-    if(crateRan >= 999){
-      let towerCrate = new TowerCrate(this.game, window.innerWidth+20, Math.random() * window.innerHeight, 'crate', 10, false);
-      this.towerCrates.add(towerCrate);
+    if(crateRandomDiceRoll >= 999){
+      this.createCrates();
     }
 
     /*  Spawning Health Pots */
-    if(healthRan >= 999){
-        let healthPot = new HealthPot(this.game, window.innerWidth+20, Math.random() * window.innerHeight, 'heart', 10, 5, false, false);
-
-        this.healthPots.add(healthPot);
+    if(healthRandomDiceRoll >= 999){
+      this.createHealthPot();
     }
 
     /***  BOSS EVENTS  ***/
 
     /*  Spawn boss text and remove enemies from screen */
-    if((this.score % this.bossWave == 0 && this.score != 0) && !this.bossText){
+    if(this.isBossRound()){
       this.bossIsDead = false;
-      this.bossText = this.game.add.text(-20, window.innerHeight/2, 'BOSS', this.style3);
+      this.bossText = this.game.add.text(-20, window.innerHeight/2, 'BOSS', this.styles['LargeText']);
       this.enemySpawn = false;
       this.killAllEnemies();
+
       if(this.score == this.bossWave){
-        this.bluue = new BluePowerUp(this.game, window.innerWidth+20, 100, 'blue');
-        this.physics.enable(this.bluue, Phaser.Physics.ARCADE);
-        this.game.add.existing(this.bluue);
-        this.blueActivated = true;
-        this.enemySpawnRate -= 5;
+        this.prepareBlue();
       }
       if(this.score == (2 * this.bossWave)){
-        this.green = new GreenPowerUp(this.game, window.innerWidth+20, 100, 'green');
-        //let greenSmoke = this.add.sprite(this.player.x, this.player.y, 'greenSmoke');
-        this.physics.enable(this.green, Phaser.Physics.ARCADE);
-        this.game.add.existing(this.green)
-        this.greenActivated = true;
-        this.enemySpawnRate -= 5;
+        this.prepareGreen();
       }
       if(this.score == (3 * this.bossWave)){
-        this.red = new RedPowerUp(this.game, window.innerWidth+20, 100, 'red');
-        this.physics.enable(this.green, Phaser.Physics.ARCADE);
-        this.game.add.existing(this.red);
-        this.redActivated = true;
-        this.enemySpawnRate -= 5;
+          this.prepareRed();
       }
       if(this.score == (4 * this.bossWave)){
-        this.yellow = new YellowPowerUp(this.game, window.innerWidth+20, 100, 'yellow');
-        this.physics.enable(this.yellow, Phaser.Physics.ARCADE);
-        this.game.add.existing(this.yellow);
-        this.yellowActivated = true;
-        this.enemySpawnRate -= 5;
+          this.prepareYellow();
       }
     }
 
@@ -225,27 +189,24 @@ export default class Game extends Phaser.State {
     /*  If boss is not dead **/
     if(!this.bossIsDead){
     if( (this.bossText && (this.bossText.x > window.innerWidth + 100)) && !this.bossMode){
-    this.followingEnemy = new Enemy(this.game, -150, 300, 'dragon', 2, true);
+    this.boss = new Enemy(this.game, -150, 300, 'dragon', 2, true);
 
-    this.followingEnemy.setHealth(100);
-    this.followingEnemy.scale.setTo(1);
-    this.game.add.existing(this.followingEnemy);
+    this.boss.setHealth(100);
+    this.boss.scale.setTo(1);
+    this.game.add.existing(this.boss);
     this.bossMode = true;
     //this.bossText = null;
     }
   }
 
     if(this.bossMode){
-    this.game.physics.arcade.moveToObject(this.followingEnemy, this.tower, 350);
-    this.game.physics.arcade.overlap(this.followingEnemy, this.tower, this.bossDamageTower, null, this);
-    this.game.physics.arcade.overlap(this.followingEnemy, this.player.bullets, this.attackBoss, null, this);
+    this.game.physics.arcade.moveToObject(this.boss, this.tower, 350);
+    this.game.physics.arcade.overlap(this.boss, this.tower, this.bossDamageTower, null, this);
+    this.game.physics.arcade.overlap(this.boss, this.player.bullets, this.attackBoss, null, this);
 
     }
 
-    //console.log('outside ' + this.tower);
-    //console.log(this.player);
     if(this.pickedUpCrate){
-      //console.log('inside' + this.tower);
       this.game.physics.arcade.moveToObject(this.grabbedCrate, this.player, 350);
       this.game.physics.arcade.overlap(this.grabbedCrate, this.tower, this.healTower,null,this);
     }
@@ -264,20 +225,86 @@ export default class Game extends Phaser.State {
       this.game.physics.arcade.overlap(this.grabbedCrate, this.towers, this.healTowerGame);
     }
 
-
     this.text.setText(this.score);
   }
 
+  createPowerUpTextMenu(){
+    let powerUps = {
+      blue: this.game.add.sprite(window.innerWidth/2.35, 10, 'blue'),
+      red: this.game.add.sprite(window.innerWidth/2.55, 10, 'red'),
+      green: this.game.add.sprite(window.innerWidth/2.75, 10, 'green'),
+      purple: this.game.add.sprite(window.innerWidth/3, 10, 'purple'),
+      yellow: this.game.add.sprite(window.innerWidth/3.3, 10, 'yellow')
+    }
+
+    powerUps['blue'].scale.setTo(2.5);
+    powerUps['red'].scale.setTo(2.5);
+    powerUps['green'].scale.setTo(2.5);
+    powerUps['purple'].scale.setTo(2.5);
+    powerUps['yellow'].scale.setTo(2.5);
+    
+
+  }
+
+  turnOnBackgroundMusic(){
+    let backgroundMusic = this.game.add.audio('music');
+    backgroundMusic.play();
+  }
+
+  createTowers(){
+    this.tower = new Tower(this.game, window.innerWidth / 2, window.innerHeight / 2 - 100, 'tower');
+    this.tower2 = new Tower(this.game, window.innerWidth / 2, window.innerHeight/4 - 100, 'tower');
+    this.tower3 = new Tower(this.game, window.innerWidth / 2, window.innerHeight - (window.innerHeight / 4) - 100, 'tower');
+    this.game.add.existing(this.tower);
+    this.game.add.existing(this.tower2);
+    this.game.add.existing(this.tower3);
+  }
+
+  //Creates and returns phaser group object, can add parameter to include N number of towers.
+  createTowerGroup(){
+    this.towers = this.add.group();
+
+    this.towers.add(this.tower);
+    this.towers.add(this.tower2);
+    this.towers.add(this.tower3);
+
+    return this.towers;
+  }
+
+  createPlayer(){
+    this.player = new Player(this.game, 600, 100, 'player');
+    this.game.add.existing(this.player);
+  }
+
+  createEnemies(){
+    for(var i = 0; i < 1; i++){
+      this.enemies.add(new Enemy(this.game, -25, Math.random() * window.innerHeight, 'zombies', 2, true));
+    }
+  }
+
+  createCrates(){
+    this.towerCrates.add(new TowerCrate(this.game, window.innerWidth+20, Math.random() * window.innerHeight, 'crate', 10, false));
+  }
+
+  createHealthPot(){
+    this.healthPots.add(new HealthPot(this.game, window.innerWidth+20, Math.random() * window.innerHeight, 'heart', 10, 5, false, false));
+  }
 
 
     activateBlue(){
       let style = { font: "100px Arial", fill: "#FFFFFF"};
-      //var style = { fill: '#FFF' };
       this.player.speed = 15;
       this.blueActivated = false;
       this.bluue.kill();
-      let checkMark = this.game.add.text(window.innerWidth/2.35 + 5, 10, "X", style);
-      console.log('activating blue');
+      this.game.add.text(window.innerWidth/2.35 + 5, 10, "X", style);
+    }
+
+    prepareBlue(){
+      this.bluue = new BluePowerUp(this.game, window.innerWidth+20, 100, 'blue');
+      this.physics.enable(this.bluue, Phaser.Physics.ARCADE);
+      this.game.add.existing(this.bluue);
+      this.blueActivated = true;
+      this.enemySpawnRate -= 5;
     }
 
     activateGreen(){
@@ -285,7 +312,16 @@ export default class Game extends Phaser.State {
       this.player.fireRate = 500;
       this.greenActivated = false;
       this.green.kill();
-      let checkMark = this.game.add.text(window.innerWidth/2.75, 10, "X", style);
+      this.game.add.text(window.innerWidth/2.75, 10, "X", style);
+    }
+
+    prepareGreen(){
+      this.green = new GreenPowerUp(this.game, window.innerWidth+20, 100, 'green');
+      //let greenSmoke = this.add.sprite(this.player.x, this.player.y, 'greenSmoke');
+      this.physics.enable(this.green, Phaser.Physics.ARCADE);
+      this.game.add.existing(this.green)
+      this.greenActivated = true;
+      this.enemySpawnRate -= 5;
     }
 
     activateRed(){
@@ -294,14 +330,31 @@ export default class Game extends Phaser.State {
       this.player.heal(100);
       this.redActivated = false;
       this.red.kill();
-      let checkMark = this.game.add.text(window.innerWidth/2.55, 10, "X", style);
+      this.game.add.text(window.innerWidth/2.55, 10, "X", style);
     }
+
+    prepareRed(){
+      this.red = new RedPowerUp(this.game, window.innerWidth+20, 100, 'red');
+      this.physics.enable(this.green, Phaser.Physics.ARCADE);
+      this.game.add.existing(this.red);
+      this.redActivated = true;
+      this.enemySpawnRate -= 5;
+    }
+
     activateYellow(){
       let style = { font: "100px Arial", fill: "#FFFFFF" };
       this.tower.setMaxHealth(1000);
       this.yellowActivated = false;
       this.yellow.kill();
-      let checkMark = this.game.add.text(window.innerWidth/3.3, 10, "X", style);
+      this.game.add.text(window.innerWidth/3.3, 10, "X", style);
+    }
+
+    prepareYellow(){
+      this.yellow = new YellowPowerUp(this.game, window.innerWidth+20, 100, 'yellow');
+      this.physics.enable(this.yellow, Phaser.Physics.ARCADE);
+      this.game.add.existing(this.yellow);
+      this.yellowActivated = true;
+      this.enemySpawnRate -= 5;
     }
 
   killAllEnemies(){ //clears all enemies from the screen
@@ -327,6 +380,10 @@ export default class Game extends Phaser.State {
       this.score += 1;
       this.tower.tint = 16777215;
     }
+  }
+
+  bossTextIntroIsDone(){
+    return this.bossText && (this.bossText.x > window.innerWidth + 100) && !this.bossMode;
   }
 
   enemykill(player, enemy) {
@@ -362,12 +419,9 @@ export default class Game extends Phaser.State {
         this.tower.tint = 16777215;
     else
         this.tower.tint = 0xff00ff;
-
-
-    //console.log(this.tower);
   }
 
-  damagePlayer() { //removes health from the player entity with damage cool down
+  damagePlayer() { 
     if ((Date.now() - this.lastDamaged) > 150) { //checks if damage cool down is complete
       this.player.deductHealth(5);
       this.lastDamaged = Date.now();
@@ -386,4 +440,13 @@ export default class Game extends Phaser.State {
     this.grabbedCrate = crate;
     this.pickedUpCrate = true;
   }
+
+  gameOver(){
+    this.game.state.start('gameOver');
+  }
+
+  isBossRound(){
+    return (this.score % this.bossWave == 0 && this.score != 0) && !this.bossText;
+  }
+
 }
