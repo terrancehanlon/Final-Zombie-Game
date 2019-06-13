@@ -187,15 +187,13 @@ export default class Game extends Phaser.State {
       this.bossText.angle += 1;
     }
     /*  If boss is not dead **/
-    if(!this.bossIsDead){
-    if( (this.bossText && (this.bossText.x > window.innerWidth + 100)) && !this.bossMode){
-    this.boss = new Enemy(this.game, -150, 300, 'dragon', 2, true);
-
-    this.boss.setHealth(100);
-    this.boss.scale.setTo(1);
-    this.game.add.existing(this.boss);
-    this.bossMode = true;
-    //this.bossText = null;
+    if(this.bossIsDead == false){
+      if(this.bossTextIntroIsDone()){
+        this.boss = new Enemy(this.game, -150, 300, 'dragon', 2, true);
+        this.boss.setHealth(100);
+        this.boss.scale.setTo(1);
+        this.game.add.existing(this.boss);
+        this.bossMode = true;
     }
   }
 
@@ -203,7 +201,6 @@ export default class Game extends Phaser.State {
     this.game.physics.arcade.moveToObject(this.boss, this.tower, 350);
     this.game.physics.arcade.overlap(this.boss, this.tower, this.bossDamageTower, null, this);
     this.game.physics.arcade.overlap(this.boss, this.player.bullets, this.attackBoss, null, this);
-
     }
 
     if(this.pickedUpCrate){
