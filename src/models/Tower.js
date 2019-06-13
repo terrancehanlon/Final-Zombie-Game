@@ -17,6 +17,10 @@ export default class Game extends Phaser.Sprite {
     //this.game.add.sprite(this.x, this.y, 'tower');
   }
 
+  ifDead(){
+    return this.health <= 0;
+  }
+
   deductHealth(val){ //removes health from entity
     if(val < 0){
       this.health += Math.abs(val);
